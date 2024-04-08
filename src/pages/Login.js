@@ -17,11 +17,13 @@ export const Login = () => {
   const move_signUp = () => {
     nav.push("SignUp"); // should we changed
   };
+  
 
   const move_main = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.error("Logged in success")
+      nav.push("MainS");
     } catch (error) {
 
       console.error(error);
