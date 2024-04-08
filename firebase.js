@@ -8,7 +8,6 @@ import { getFirestore } from "firebase/firestore";
 
 
 const firebaseConfig = {
-  // info goes here
 };
 
 
