@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { SafeAreaView, View, Text, StyleSheet, TextInput, Pressable, Keyboard } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-//import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { auth, db } from "../../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { Screen_button } from "../modules/Screen_button";
+
 
 export const SignUp = () => {
 
@@ -13,8 +16,19 @@ export const SignUp = () => {
 
   const nav = useNavigation();
 
-  const createUser = async (response) => {
-    // Create Profile Query Here
+  const createUser = async () => {
+    try {
+      
+      const { user } = await createUserWithEmailAndPassword(auth, email, password)
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+      });
+      
+    } catch (error) {
+      
+      console.error(error);
+      //Alert.alert('Error', error.message);
+    }
   };
 
   const move_login = () => {
