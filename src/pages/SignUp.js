@@ -6,7 +6,7 @@ import { auth, db } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { Screen_button } from "../modules/Screen_button";
-
+import Toast from 'react-native-toast-message';
 
 export const SignUp = () => {
 
@@ -16,6 +16,8 @@ export const SignUp = () => {
 
   const nav = useNavigation();
 
+
+
   const createUser = async () => {
     try {
       
@@ -24,9 +26,24 @@ export const SignUp = () => {
         email: user.email,
       });
 
-      move_login()
+      Toast.show({
+        type: 'success',
+        text1: 'Registered!',
+        visibilityTime: 700,
+        autoHide: true,
+      })
+
+
+      setTimeout(move_login, 1000) // needs to be changed
       
     } catch (error) {
+      
+      Toast.show({
+        type: 'error',
+        text1: 'Error, please try again!',
+        visibilityTime: 1000,
+        autoHide: true,
+      })
       
       console.error(error);
       //Alert.alert('Error', error.message);
@@ -92,11 +109,9 @@ export const SignUp = () => {
 
 
           </View>
-
-          
-          
         </View>
       </SafeAreaView>
+      <Toast />
     </Pressable>
   );
 };

@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { Login } from "./src/pages/Login";
 import { SignUp } from "./src/pages/SignUp";
-
+import Toast from 'react-native-toast-message';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -28,6 +28,7 @@ export default function App() {
             headerShown: false,
           }}
         />
+
 
       </Stack.Navigator>
     </NavigationContainer>
