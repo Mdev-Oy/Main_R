@@ -3,6 +3,8 @@ import { SafeAreaView, View, Text, StyleSheet, TextInput, Pressable, Keyboard, A
 import { useNavigation } from "@react-navigation/native";
 
 //import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { auth } from "../../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 import { Screen_button } from "../modules/Screen_button";
 export const Login = () => {
@@ -17,7 +19,14 @@ export const Login = () => {
   };
 
   const move_main = async () => {
-    // Login 
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      console.error("Logged in success")
+    } catch (error) {
+
+      console.error(error);
+      Alert.alert('Error', error.message);
+    }
   };
 
 
