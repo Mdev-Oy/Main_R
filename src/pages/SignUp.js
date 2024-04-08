@@ -23,6 +23,8 @@ export const SignUp = () => {
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
       });
+
+      move_login()
       
     } catch (error) {
       
