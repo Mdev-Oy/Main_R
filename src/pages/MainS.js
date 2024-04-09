@@ -2,15 +2,30 @@ import React, { useState } from "react";
 import { SafeAreaView, View, Text, StyleSheet, TextInput, Pressable, Keyboard, Button } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
+import { Screen_button } from "../modules/Screen_button";
+
 
 
 
 export const MainS = () => {
     const [isPlaying, setIsPlaying] = React.useState(true)
     const [duration, setDuration] = useState(10);
+
+    const nav = useNavigation();
+
+    const move_settings = () => {
+      nav.push("Settings"); // should be changed
+    };
   
     return (
       <View style={styles.container}>
+
+          <Screen_button
+            title="Settings"
+            onPress={move_settings}
+            type = "primary"
+          />
+
         <CountdownCircleTimer
           isPlaying={isPlaying}
           duration={duration}
