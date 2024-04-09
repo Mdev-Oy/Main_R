@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Button, Alert } from 'react-native';
 import { auth } from "../../firebase";
-import { signOut } from "firebase/auth";
+import { signOut, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+import { updatePassword, updateEmail } from 'firebase/auth';
 
 export const Settings = () => {
 
@@ -16,6 +17,7 @@ export const Settings = () => {
   const [deleteAccountPassword, setDeleteAccountPassword] = useState('');
 
   const nav = useNavigation();
+  const user = auth.currentUser;
 
   const handleChangePassword = () => {
     setChangePasswordModalVisible(true);
@@ -45,8 +47,19 @@ export const Settings = () => {
     setDeleteAccountPassword('');
   };
 
-  const handleConfirmChangePassword = () => {
-    handleCloseChangePasswordModal();
+  const handleConfirmChangePassword = async () => {
+    try {
+        const credential = EmailAuthProvider.credential(user.email, oldPassword);
+        await reauthenticateWithCredential(user, credential);
+        
+        await updatePassword(user, newPassword);
+        Alert.alert('Password updated successfully!');
+
+        handleCloseChangePasswordModal();
+        nav.navigate("Login")
+      } catch (error) {
+        console.error(error);
+      }
   };
 
   const handleConfirmChangeEmail = () => {
@@ -55,7 +68,7 @@ export const Settings = () => {
 
   const handleConfirmDeleteAccount = () => {
 
-    Alert.alert('Account Deleted');
+    Alert.alert('Account Deleted'); // should we really delete accounts or just mark them
     handleCloseDeleteAccountModal();
   };
 
