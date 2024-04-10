@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Button, Alert } from 'react-native';
-import { auth } from "../../firebase";
-import { signOut, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
+import { auth, db } from "../../firebase";
+import { signOut, signInWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword, verifyBeforeUpdateEmail } from "firebase/auth";
+import { doc, updateDoc } from 'firebase/firestore';
 import { useNavigation } from "@react-navigation/native";
-import { updatePassword, updateEmail } from 'firebase/auth';
+
 
 export const Settings = () => {
 
@@ -62,13 +63,44 @@ export const Settings = () => {
       }
   };
 
-  const handleConfirmChangeEmail = () => {
-    handleCloseChangeEmailModal();
+  const handleConfirmChangeEmail = async () => { 
+    try {
+      const credential = EmailAuthProvider.credential(user.email, oldPassword);
+      await reauthenticateWithCredential(user, credential);
+  
+
+      try {
+        await signInWithEmailAndPassword(auth, newEmail, 'test_password'); 
+      } catch (error) {
+        if (error.code === 'auth/user-not-found') {
+
+          await updateEmail(user, newEmail);
+          Alert.alert('Email updated successfully!');
+  
+          await updateDoc(doc(db, "users", user.uid), {
+            email: newEmail,
+          });
+  
+          handleCloseChangeEmailModal();
+          nav.navigate("Login"); 
+
+        } else {
+          Alert.alert('Error', 'This email address might already be in use.');
+        }
+        return; 
+      }
+  
+    } catch (error) {
+      Alert.alert('Error', error.message); 
+      console.error(error);
+    }
   };
+
 
   const handleConfirmDeleteAccount = () => {
 
-    Alert.alert('Account Deleted'); // should we really delete accounts or just mark them
+    Alert.alert('Account Deleted'); // should we really delete accounts or just mark them??
+    // will be added later
     handleCloseDeleteAccountModal();
   };
 
