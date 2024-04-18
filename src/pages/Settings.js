@@ -20,17 +20,8 @@ export const Settings = () => {
   const nav = useNavigation();
   const user = auth.currentUser;
 
-  const handleChangePassword = () => {
-    setChangePasswordModalVisible(true);
-  };
 
-  const handleChangeEmail = () => {
-    setChangeEmailModalVisible(true);
-  };
 
-  const handleDeleteAccount = () => {
-    setDeleteAccountModalVisible(true);
-  };
 
   const handleCloseChangePasswordModal = () => {
     setChangePasswordModalVisible(false);
@@ -48,7 +39,8 @@ export const Settings = () => {
     setDeleteAccountPassword('');
   };
 
-  const handleConfirmChangePassword = async () => {
+
+  const changePassword = async () => {
     try {
         const credential = EmailAuthProvider.credential(user.email, oldPassword);
         await reauthenticateWithCredential(user, credential);
@@ -63,7 +55,8 @@ export const Settings = () => {
       }
   };
 
-  const handleConfirmChangeEmail = async () => { 
+
+  const changeEmail = async () => { 
     try {
       const credential = EmailAuthProvider.credential(user.email, oldPassword);
       await reauthenticateWithCredential(user, credential);
@@ -97,12 +90,14 @@ export const Settings = () => {
   };
 
 
-  const handleConfirmDeleteAccount = () => {
+  const deleteAccount = () => {
 
     Alert.alert('Account Deleted'); // should we really delete accounts or just mark them??
     // will be added later
     handleCloseDeleteAccountModal();
   };
+
+
 
   const handleLogout = async () => {
     try 
@@ -120,17 +115,17 @@ export const Settings = () => {
     <View style={styles.container}>
 
 
-      <TouchableOpacity style={styles.item} onPress={handleChangePassword}>
+      <TouchableOpacity style={styles.item} onPress={() => setChangePasswordModalVisible(true)}>
         <Text>Change Password</Text>
       </TouchableOpacity>
 
 
-      <TouchableOpacity style={styles.item} onPress={handleChangeEmail}>
+      <TouchableOpacity style={styles.item} onPress={() => setChangeEmailModalVisible(true)}>
         <Text>Change Email</Text>
       </TouchableOpacity>
 
 
-      <TouchableOpacity style={styles.item} onPress={handleDeleteAccount}>
+      <TouchableOpacity style={styles.item} onPress={() => setDeleteAccountModalVisible(true)}>
         <Text>Delete Account</Text>
       </TouchableOpacity>
 
@@ -163,7 +158,7 @@ export const Settings = () => {
             />
             <View style={styles.buttonsContainer}>
               <Button title="Cancel" onPress={handleCloseChangePasswordModal} />
-              <Button title="Confirm" onPress={handleConfirmChangePassword} />
+              <Button title="Confirm" onPress={changePassword} />
             </View>
           </View>
         </View>
@@ -192,7 +187,7 @@ export const Settings = () => {
             />
             <View style={styles.buttonsContainer}>
               <Button title="Cancel" onPress={handleCloseChangeEmailModal} />
-              <Button title="Confirm" onPress={handleConfirmChangeEmail} />
+              <Button title="Confirm" onPress={changeEmail} />
             </View>
           </View>
         </View>
@@ -215,7 +210,7 @@ export const Settings = () => {
             />
             <View style={styles.buttonsContainer}>
               <Button title="Cancel" onPress={handleCloseDeleteAccountModal} />
-              <Button title="Confirm" onPress={handleConfirmDeleteAccount} />
+              <Button title="Confirm" onPress={deleteAccount} />
             </View>
           </View>
         </View>

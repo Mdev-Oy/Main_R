@@ -1,107 +1,231 @@
-import React, { useState } from "react";
-import { SafeAreaView, View, Text, StyleSheet, TextInput, Pressable, Keyboard, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import { SafeAreaView, View, Text, StyleSheet, Pressable, TouchableOpacity, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { TextInput, Button, Paragraph, Dialog, Portal } from 'react-native-paper';
 
-//import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { auth } from "../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
-import { Screen_button } from "../modules/Screen_button";
+import { Loading } from "./Loading";
+
+
+const bgColor = "#161618";
+
 export const Login = () => {
 
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+
+  const [email, setEmail] = useState('');
+  const [IsEmailValid, setIsEmailValid] = useState(false);
+  const [password, setPassword] = useState('');
+  const [IsPasswordValid, setIsPasswordValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); 
+
+  const [visible, setVisible] = useState(false);
+  const hideDialog = () => setVisible(false);
+  const [ErrorMsg, setErrorMsg] = useState('');
+
+
+  const validateEmail = (email) => {
+    const isValid =  /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(email);
+    setIsEmailValid(isValid); 
+  };
+
+  const validatePassword = (password) => {
+    setIsPasswordValid(password.length >= 8);
+  };
 
   const nav = useNavigation();
 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        nav.navigate("MainS");
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    return unsubscribe; 
+  }, []);
+
   const move_signUp = () => {
-    nav.push("SignUp"); // should we changed
+    nav.push("SignUp"); 
   };
   
 
   const move_main = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      setIsLoading(true);
+
       nav.navigate("MainS");
 
     } catch (error) {
+      setVisible(true);
+      const errorCode = error.code;
 
-      console.error(error);
-      Alert.alert('Error', error.message);
+      switch (errorCode) {
+        
+        case 'auth/invalid-email':
+          setErrorMsg("Icorrect Email or Password. Please try again.");
+          break;
+        
+        case 'auth/wrong-password':
+          setErrorMsg("Icorrect Email or Password. Please try again.");
+          break;
+
+        case 'auth/user-not-found':
+          setErrorMsg("User not found. Please try again");
+          break;
+
+        case 'auth/missing-email':
+          setErrorMsg("Please enter a valid email");
+          break;
+        
+        case 'auth/missing-password':
+          setErrorMsg("Please enter a valid email and password");
+          break;
+        
+        default:
+          setErrorMsg("Authentication failed, please try again later");
+          break;
+      } 
+    } finally {
+      setIsLoading(false);
+      setEmail('');
+      setPassword('');
+      setIsEmailValid(false);
+      setIsPasswordValid(false);
     }
   };
 
 
-  // add bouncer
-  // css
-  // function names?
 
   return (
-    <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
+
       <SafeAreaView style={styles.contentView}>
+        <StatusBar barStyle="light-content" backgroundColor={bgColor} />
+        <Portal> 
+          <Dialog visible={visible} onDismiss={hideDialog} style={{ backgroundColor: '#FFFFFF' }}>
+            <Dialog.Title> Login failed </Dialog.Title>
+            <Dialog.Content>
+              <Paragraph> {ErrorMsg}</Paragraph>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideDialog} textColor="#000000"> Ok </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
 
-        <View style={styles.maincontainer}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title_main}> Focus </Text>
-          </View>
-          <View style={styles.mainContent}>
+        { isLoading ? (<Loading/>
+        ) : (
+                  <View style={styles.maincontainer}>
+
+                  <View style={styles.titleContainer}>
+                    <Text style={styles.title_main}> Galaxy </Text>
+                  </View>
+                  
+                  <View style={styles.mainContent}>
+        
+        
+                    <Text style = {styles.field_label}> Email </Text>
+                    <TextInput
+                      style={styles.input_login}
+
+                      mode='outlined'
+                      placeholder="Enter your email"
+                      value={email}
+                      onChangeText={(email) => { setEmail(email); validateEmail(email); }} 
+                      autoCapitalize="none"
+                      inputMode="email"
+                      activeOutlineColor="#818181"
+                      right={IsEmailValid ? (
+                        <TextInput.Icon icon="check-bold"/>
+                      ) : (
+                        <TextInput.Icon icon="email" />
+                      )}
+                      outlineStyle = {{borderRadius: 5}}
+                      theme = {{ colors: { background: 'white' } }}
+                    />
+        
+                    <Text style = {styles.field_label}> Password </Text>
+                    <TextInput
+                      style={styles.input_login}
+
+                      mode='outlined'
+                      placeholder="Enter your password"
+                      value={password}
+                      onChangeText={(password) => {setPassword(password); validatePassword(password); }} 
+                      secureTextEntry
+                      activeOutlineColor="#818181"
+                      right={IsPasswordValid ? (
+                        <TextInput.Icon icon="check-bold"/>
+                      ) : (
+                        <TextInput.Icon icon="lock" />
+                      )}
+                      outlineStyle = {{borderRadius: 5}}
+                      theme = {{ colors: { background: 'white' } }}
+                    />
 
 
-            <Text style = {styles.field_label}> Email </Text>
-            <TextInput
-              style={styles.input_login}
-              placeholder="Enter your email"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              inputMode="email"
-            />
 
-            <Text style = {styles.field_label}> Password </Text>
-            <TextInput
-              style={styles.input_login}
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
 
-          <Screen_button 
-            title="Login" 
-            onPress={move_main} 
-            type = "primary" 
-          />
+                  <TouchableOpacity onPress={() => nav.push("RestorePassword")}>
+                    <Text style={styles.forgotPassword_button}>Forgot Password?</Text>
+                  </TouchableOpacity>
+                  </View>
 
-          <Screen_button
-            title="Sign Up"
-            onPress={move_signUp}
-            type = "secondary"
-          />
-          </View>
-          
+                  <View style = {styles.bottom_buttons}>
+                  <Button 
+                    mode="contained" 
+                    
+                    onPress={move_main} 
+                    buttonColor="#FFFFFF"
+                    textColor={bgColor}
+                    rippleColor="#bababa"
+                    style = {styles.login_button}>
+                      
+                    
+                    Login
+                  
+                  </Button>
 
-        </View>
+                  <TouchableOpacity onPress={move_signUp}>
+                    <Text style={styles.signUp_button}> Sign Up </Text>
+                  </TouchableOpacity>
+
+                  </View>
+                </View>
+        )}
+
+
       </SafeAreaView>
-    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
 
+
   contentView: {
     flex: 1,
-    backgroundColor: "#0F0C36",
+    backgroundColor: bgColor,
   },
 
   maincontainer: {
     flex: 1,
-    padding: '5%' , 
-    backgroundColor: "#0F0C36",
+    padding: '10%' , 
+    backgroundColor: bgColor,
+
+
   },
 
   titleContainer: {
-    flex: 1.2,
     justifyContent: "center",
+  },
+
+  mainContent: {
+    flex: 1,
+    marginTop: '10%',
   },
 
   title_main: {
@@ -111,24 +235,33 @@ const styles = StyleSheet.create({
     color: "#ffffff"
   },
 
-  input_login: {
-    borderBottomWidth: 1,
-    borderRadius: 10,
-    height: "7%",
-    fontSize: 15,
-    backgroundColor: "white",
-    paddingLeft: 8,
-  },
 
   field_label: {
     color: "#ffffff",
     fontWeight: "500",
     marginTop: "8%",
-    marginBottom: "2%",
+    marginBottom: "3%",
   },
 
-  mainContent: {
-    flex: 6,
+
+  login_button: {
+    textColor: "#818181",
+    borderRadius: 10,
+    marginBottom: "3%"
+  },
+
+  signUp_button: {
+    alignSelf: "center",
+    marginTop: "3%",
+    color: "#FFFFFF",
+    fontWeight: "bold"
+  },
+
+  forgotPassword_button: {
+    alignSelf: 'flex-end', 
+    marginTop: "3%",
+    color: "#FFFFFF",
+    fontWeight: "bold"
   },
 
   
