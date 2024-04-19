@@ -83,7 +83,7 @@ export const FTimer = () => {
 
   return (
     <SafeAreaView style = {styles.mainView}>
-    <View>
+    <View style = {styles.container}>
 
 
       <CountdownCircleTimer
@@ -154,8 +154,16 @@ export const FTimer = () => {
 
 const styles = StyleSheet.create({
   mainView: {
-    backgroundColor: bgColor,
+    flex: 1,
   },
+
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+
+
 
 
 

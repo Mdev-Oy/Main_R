@@ -2,6 +2,7 @@ import React from "react";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Provider } from "react-native-paper";
 
 import { Login } from "./src/pages/Login";
@@ -12,11 +13,12 @@ import { RestorePassword } from "./src/pages/RestorePassword";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
+  const Tab = createBottomTabNavigator();
 
   return (
     <Provider>
     <NavigationContainer 
-    theme={{ colors: { background: '#161618' } }}>
+    theme={{ colors: { background: '#161618', secondaryContainer: 'rgba(255, 255, 255, 0.1)'} }}>
       <Stack.Navigator
       screenOptions={{
         animation: 'ios'

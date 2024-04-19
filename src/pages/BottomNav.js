@@ -2,22 +2,20 @@ import React, { useState } from "react";
 import { SafeAreaView, View, Text, StyleSheet, TextInput, Pressable, Keyboard, Button } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
-
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 
-import { BottomTabs } from "./BottomNav";
+
 import { Settings } from "./Settings/Settings";
 import { FTimer } from "./Timer";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-; 
 
 
-const Tab = createMaterialBottomTabNavigator();
+
+const Tab = createBottomTabNavigator();
 const bgColor = "#161618";
 
-export const MainS = () => {
+export const BottomNav = () => {
 
 
     const nav = useNavigation();
@@ -27,14 +25,17 @@ export const MainS = () => {
     };
   
     return (
-    <Tab.Navigator
-    activeColor='#FFFFFF'
-    inactiveColor='#fcfcfc'
-    labeled={false}
-    barStyle={{
-      backgroundColor: '#1a1a1c', 
-    }}
-    >
+    <Tab.Navigator    
+    screenOptions={{
+      tabBarStyle: {
+        backgroundColor: '#1a1a1c', 
+        borderTopWidth: 0,
+        height: '7.5%',
+      },
+      tabBarShowLabel: false,
+      tabBarActiveTintColor: '#FFFFFF',
+      tabBarInactiveTintColor: '#fcfcfc',
+    }}>
 
       <Tab.Screen
         name="Stats"
