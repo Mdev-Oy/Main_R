@@ -144,7 +144,7 @@ export const SignUp = () => {
           
           </View>
 
-          <View>
+          <View style={styles.bottom_buttons}>
           <Button 
                     mode="contained" 
                     
@@ -213,6 +213,8 @@ const styles = StyleSheet.create({
     marginBottom: "3%",
   },
 
+  bottom_buttons: {
+  },
 
   signup_button: {
     textColor: "#818181",

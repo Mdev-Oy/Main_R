@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, Button, Modal, Alert } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
+import { Modal, Button, TextInput } from 'react-native-paper';
 import { reauthenticateWithCredential, deleteUser, EmailAuthProvider } from 'firebase/auth';
 
-const DeleteAccountModal = ({ visible, onClose }) => {
+import { auth } from '../../../firebase';
+
+export const DeleteAccountModal = ({ visible, onClose, onAccountDeletion }) => {
   const [password, setPassword] = useState('');
 
   const deleteAccount = async () => {
@@ -12,8 +15,10 @@ const DeleteAccountModal = ({ visible, onClose }) => {
       await reauthenticateWithCredential(user, credential);
 
       await deleteUser(user);
+      await signOut(auth);
       Alert.alert('Account deleted!'); 
-      onClose();
+      onAccountDeletion();
+      
     } catch (error) {
       console.error(error);
 
@@ -21,53 +26,74 @@ const DeleteAccountModal = ({ visible, onClose }) => {
   };
 
   return (
-    <Modal animationType="none" transparent={true} visible={visible} onRequestClose={onClose}>
-      <View style={styles.modalContainer}>
+    <Modal visible={visible} onDismiss={onClose}>
+
         <View style={styles.modalContent}>
-          <TextInput
+        <TextInput
             style={styles.input}
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            mode='outlined'
+            activeOutlineColor="#818181"
+            outlineStyle = {{borderRadius: 5}}
+            contentStyle={{backgroundColor: 'rgba(255, 255, 255, 1)'}}
           />
+
+          
           <View style={styles.buttonsContainer}>
-            <Button title="Cancel" onPress={onClose} />
-            <Button title="Confirm" onPress={deleteAccount} />
+            <Button 
+            onPress={onClose} 
+            buttonColor="#1a1a1c"
+            textColor='#FFFFFF'
+            rippleColor="#bababa"
+            style={styles.item}> 
+            Cancel 
+            </Button>
+
+            <Button 
+            onPress={deleteAccount} 
+            buttonColor="#1a1a1c"
+            textColor='#FFFFFF'
+            rippleColor="#bababa"
+            style={styles.item}> 
+            Confirm 
+            </Button>
+            
           </View>
         </View>
-      </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-    modalContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-      backgroundColor: '#fff',
-      padding: 20,
-      borderRadius: 10,
-      width: '80%',
-      alignItems: 'center',
-    },
-    input: {
-      width: '100%',
-      height: 40,
-      borderWidth: 1,
-      marginBottom: 10,
-      paddingHorizontal: 10,
-    },
-    buttonsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      width: '100%',
-      marginTop: 10,
-    },
-  });
 
-export default DeleteAccountModal;
+
+  modalContent: {
+    backgroundColor: '#202022',
+    padding: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  input: {
+    width: '100%',
+    height: 35,
+    marginBottom: 10,
+    fontSize: 15
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginTop: 10,
+  },
+
+  item: {
+    marginBottom: "2%",
+    justifyContent: 'center',
+    borderRadius: 5,
+  },
+});
+
+

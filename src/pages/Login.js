@@ -243,6 +243,16 @@ const styles = StyleSheet.create({
     marginBottom: "3%",
   },
 
+  bottom_buttons: {
+
+  },
+
+  forgotPassword_button: {
+    alignSelf: 'flex-end', 
+    marginTop: "3%",
+    color: "#FFFFFF",
+    fontWeight: "bold"
+  },
 
   login_button: {
     textColor: "#818181",
@@ -255,14 +265,7 @@ const styles = StyleSheet.create({
     marginTop: "3%",
     color: "#FFFFFF",
     fontWeight: "bold"
-  },
-
-  forgotPassword_button: {
-    alignSelf: 'flex-end', 
-    marginTop: "3%",
-    color: "#FFFFFF",
-    fontWeight: "bold"
-  },
+  }
 
   
 });

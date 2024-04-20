@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Button, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
+import { Modal, Button, TextInput } from 'react-native-paper';
 import { signOut, signInWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword, verifyBeforeUpdateEmail } from "firebase/auth";
 import { doc, updateDoc } from 'firebase/firestore';
+
 import { db, auth } from '../../../firebase';
 
-const ChangeEmailModal = ({ visible, onClose }) => {
+export const ChangeEmailModal = ({ visible, onClose, onEmailChange }) => {
   const [newEmail, setNewEmail] = useState('');
   const [oldPassword, setOldPassword] = useState('');
 
@@ -16,6 +18,7 @@ const ChangeEmailModal = ({ visible, onClose }) => {
 
       try {
         await signInWithEmailAndPassword(auth, newEmail, 'test_password'); 
+
       } catch (error) {
         if (error.code === 'auth/user-not-found') {
           await updateEmail(user, newEmail);
@@ -25,7 +28,7 @@ const ChangeEmailModal = ({ visible, onClose }) => {
             email: newEmail,
           });
 
-          onClose(); 
+          onEmailChange(); 
         } else {
           Alert.alert('Error', 'This email address might already be in use.');
         }
@@ -39,59 +42,86 @@ const ChangeEmailModal = ({ visible, onClose }) => {
   };
 
   return (
-    <Modal animationType="none" transparent={true} visible={visible} onRequestClose={onClose}>
-      <View style={styles.modalContainer}>
+    <Modal visible={visible} onDismiss={onClose}>
+
         <View style={styles.modalContent}>
-          <TextInput
+        <TextInput
             style={styles.input}
-            placeholder="New Email"
+            placeholder="Email"
             value={newEmail}
             onChangeText={setNewEmail}
+            secureTextEntry
+            mode='outlined'
+            activeOutlineColor="#818181"
+            outlineStyle = {{borderRadius: 5}}
+            contentStyle={{backgroundColor: 'rgba(255, 255, 255, 1)'}}
           />
+
+
           <TextInput
             style={styles.input}
             placeholder="Password"
             value={oldPassword}
             onChangeText={setOldPassword}
             secureTextEntry
+            mode='outlined'
+            activeOutlineColor="#818181"
+            outlineStyle = {{borderRadius: 5}}
+            contentStyle={{backgroundColor: 'rgba(255, 255, 255, 1)'}}
           />
+          
           <View style={styles.buttonsContainer}>
-            <Button title="Cancel" onPress={onClose} />
-            <Button title="Confirm" onPress={changeEmail} />
+            <Button 
+            onPress={onClose} 
+            buttonColor="#1a1a1c"
+            textColor='#FFFFFF'
+            rippleColor="#bababa"
+            style={styles.item}> 
+            Cancel 
+            </Button>
+
+            <Button 
+            onPress={changeEmail} 
+            buttonColor="#1a1a1c"
+            textColor='#FFFFFF'
+            rippleColor="#bababa"
+            style={styles.item}> 
+            Confirm 
+            </Button>
+            
           </View>
         </View>
-      </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-    modalContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-      backgroundColor: '#fff',
-      padding: 20,
-      borderRadius: 10,
-      width: '80%',
-      alignItems: 'center',
-    },
-    input: {
-      width: '100%',
-      height: 40,
-      borderWidth: 1,
-      marginBottom: 10,
-      paddingHorizontal: 10,
-    },
-    buttonsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      width: '100%',
-      marginTop: 10,
-    },
-  });
 
-export default ChangeEmailModal;
+
+  modalContent: {
+    backgroundColor: '#202022',
+    padding: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  input: {
+    width: '100%',
+    height: 35,
+    marginBottom: 10,
+    fontSize: 15
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginTop: 10,
+  },
+
+  item: {
+    marginBottom: "2%",
+    justifyContent: 'center',
+    borderRadius: 5,
+  },
+});
+
+

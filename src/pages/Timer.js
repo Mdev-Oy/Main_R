@@ -45,6 +45,7 @@ export const FTimer = () => {
         focusedTime: increment(focusedTimeMinutes)
       });
 
+      console.log('total worked')
       if (userStatsDoc.exists()) {
         await updateDoc(userStatsRef, {
           focusedTime: increment(focusedTimeMinutes)
@@ -107,7 +108,7 @@ export const FTimer = () => {
               <Text style={{ fontSize: 50, color: 'white' }}> {formattedTime} </Text>
             ) : (
               <TextInput
-                value={initialDuration ? (initialDuration / 60).toString() : ('') }
+                value={initialDuration > 0 && initialDuration <= 7200 ? (initialDuration / 60).toString() : ('') }
                 onChangeText={handleDurationChange}
                 keyboardType="numeric"
                 mode='flat'

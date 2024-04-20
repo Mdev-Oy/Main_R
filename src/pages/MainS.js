@@ -28,11 +28,12 @@ export const MainS = () => {
   
     return (
     <Tab.Navigator
+    initialRouteName="Home"
     activeColor='#FFFFFF'
     inactiveColor='#fcfcfc'
-    labeled={false}
+
     barStyle={{
-      backgroundColor: '#1a1a1c', 
+      backgroundColor: '#1a1a1c',
     }}
     >
 
@@ -41,7 +42,7 @@ export const MainS = () => {
         component={FTimer}
         options={{
           headerShown: false,
-          tabBarLabel: 'Home', 
+          tabBarLabel: 'Stats', 
           tabBarIcon: ({focused, color, size}) => {
             return <Icon name={focused ? "chart-timeline-variant" : "chart-line-variant"} size={30} color={color} focused={focused}/>
           }

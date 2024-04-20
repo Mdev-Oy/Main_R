@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, Button, Modal, Alert } from 'react-native';
-import { auth, db } from '../../../firebase';
+import { View, StyleSheet, Alert, Text } from 'react-native';
+import { Modal, Button, TextInput } from 'react-native-paper';
 import { reauthenticateWithCredential, updatePassword, EmailAuthProvider } from 'firebase/auth';
 
-const ChangePasswordModal = ({ visible, onClose }) => {
+import { auth, db } from '../../../firebase';
+
+
+export const ChangePasswordModal = ({ visible, onClose, onPasswordChange }) => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+
 
   const changePassword = async () => {
     try {
@@ -17,7 +21,9 @@ const ChangePasswordModal = ({ visible, onClose }) => {
       Alert.alert('Password updated successfully!');
       setOldPassword('');
       setNewPassword('');
-      onClose();  // Close the modal
+      onPasswordChange();
+      await signOut(auth);
+      
     } catch (error) {
       console.error(error);
 
@@ -25,53 +31,73 @@ const ChangePasswordModal = ({ visible, onClose }) => {
   };
 
   return (
-    <Modal animationType="none" transparent={true} visible={visible} onRequestClose={onClose}>
-      <View style={styles.modalContainer}>
+    <Modal visible={visible} onDismiss={onClose}>
+
         <View style={styles.modalContent}>
-          <TextInput
+        <TextInput
             style={styles.input}
-            placeholder="Old Password"
+            placeholder="Current Password"
             value={oldPassword}
             onChangeText={setOldPassword}
             secureTextEntry
+            mode='outlined'
+            activeOutlineColor="#818181"
+            outlineStyle = {{borderRadius: 5}}
+            contentStyle={{backgroundColor: 'rgba(255, 255, 255, 1)'}}
           />
+
+
           <TextInput
             style={styles.input}
-            placeholder="New Password"
+            placeholder="New Password (>8 chars)"
             value={newPassword}
             onChangeText={setNewPassword}
             secureTextEntry
+            mode='outlined'
+            activeOutlineColor="#818181"
+            outlineStyle = {{borderRadius: 5}}
+            contentStyle={{backgroundColor: 'rgba(255, 255, 255, 1)'}}
           />
+          
           <View style={styles.buttonsContainer}>
-            <Button title="Cancel" onPress={onClose} />
-            <Button title="Confirm" onPress={changePassword} />
+            <Button 
+            onPress={onClose} 
+            buttonColor="#1a1a1c"
+            textColor='#FFFFFF'
+            rippleColor="#bababa"
+            style={styles.item}> 
+            Cancel 
+            </Button>
+
+            <Button 
+            onPress={changePassword} 
+            buttonColor="#1a1a1c"
+            textColor='#FFFFFF'
+            rippleColor="#bababa"
+            style={styles.item}> 
+            Confirm 
+            </Button>
+            
           </View>
         </View>
-      </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
+
+
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#202022',
     padding: 20,
-    borderRadius: 10,
-    width: '80%',
+    borderRadius: 5,
     alignItems: 'center',
   },
   input: {
     width: '100%',
-    height: 40,
-    borderWidth: 1,
+    height: 35,
     marginBottom: 10,
-    paddingHorizontal: 10,
+    fontSize: 15
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -79,6 +105,12 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10,
   },
+
+  item: {
+    marginBottom: "2%",
+    justifyContent: 'center',
+    borderRadius: 5,
+  },
 });
 
-export default ChangePasswordModal;
+

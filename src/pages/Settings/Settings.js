@@ -4,15 +4,17 @@ import { Avatar, Card, IconButton, Button } from 'react-native-paper';
 import { auth, db } from '../../../firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigation } from "@react-navigation/native";
-import ChangePasswordModal from './ChangePassword';
-import ChangeEmailModal from './ChangeEmail';
-import DeleteAccountModal from './DeleteAccount';
+
+import { ChangePasswordModal } from './ChangePassword';
+import { ChangeEmailModal } from './ChangeEmail';
+import { DeleteAccountModal } from './DeleteAccount';
+
 import { getDoc, doc } from 'firebase/firestore';
 
 
 export const Settings = () => {
-  const [changePasswordModalVisible, setChangePasswordModalVisible] = useState(false);
-  const [changeEmailModalVisible, setChangeEmailModalVisible] = useState(false);
+  const [passModalVisible, setPassModalVisible] = useState(false);
+  const [emailModalVisible, setEmailModalVisible] = useState(false);
   const [deleteAccountModalVisible, setDeleteAccountModalVisible] = useState(false);
   const [focusedTime, setFocusedTime] = useState(0);
 
@@ -36,12 +38,8 @@ export const Settings = () => {
   }
 
 
-  const handleCloseChangePasswordModal = () => {
-    setChangePasswordModalVisible(false);
-  };
-
   const handleCloseChangeEmailModal = () => {
-    setChangeEmailModalVisible(false);
+    setEmailModalVisible(false);
   };
 
   const handleCloseDeleteAccountModal = () => {
@@ -61,18 +59,29 @@ export const Settings = () => {
     <View style={styles.container}>
       <View style={styles.info_container}>
         <Card.Title
-          style={{borderRadius: 5}}
-          title={user.email}
-          titleStyle={{ fontSize: 15, color: '#FFFFFF'}}
-          subtitle={`Focused time: ${focusedTime}`}
-          subtitleStyle={{fontSize: 15, color: '#FFFFFF'}}
+          style={{borderRadius: 5, }}
+          title= 
+          { 
+          <Text>
+            Email: <Text style={styles.boldText}> {user.email} </Text> 
+          </Text>
+          }
+          titleStyle={{ fontSize: 14, color: '#FFFFFF'}}
+          subtitle= 
+          {
+            <Text>
+                Focused time: <Text style={styles.boldText}> {focusedTime} min. </Text> 
+            </Text>
+          }
+          subtitleStyle={{fontSize: 14, color: '#FFFFFF'}}
           left=
           {
             (props) => <Avatar.Icon {...props} 
-          icon="account-cog" 
+          icon="turtle" 
           color='#FFFFFF' 
           backgroundColor='transparent'
-          size={50}/>
+          size={50}
+          />
         }
         />
       </View>
@@ -83,7 +92,7 @@ export const Settings = () => {
         textColor='#FFFFFF'
         rippleColor="#bababa"
         style={styles.item} 
-        onPress={() => setChangePasswordModalVisible(true)}>
+        onPress={() => setPassModalVisible(true)}>
 
           <Text> Change Password </Text>
       </Button>
@@ -93,7 +102,7 @@ export const Settings = () => {
         textColor='#FFFFFF'
         rippleColor="#bababa"
         style={styles.item} 
-        onPress={() => setChangeEmailModalVisible(true)}>
+        onPress={() => setEmailModalVisible(true)}>
 
           <Text>Change Email</Text>
       </Button>
@@ -119,16 +128,20 @@ export const Settings = () => {
       </Button>
 
       <ChangePasswordModal 
-        visible={changePasswordModalVisible} 
-        onClose={handleCloseChangePasswordModal} 
+        visible={passModalVisible} 
+        onClose={() => setPassModalVisible(false)}
+        onPasswordChange={() => setPassModalVisible(false)} 
       />
+
       <ChangeEmailModal 
-        visible={changeEmailModalVisible} 
-        onClose={handleCloseChangeEmailModal} 
+        visible={emailModalVisible} 
+        onClose={() => setEmailModalVisible(false)}
+        onEmailChange={() => setEmailModalVisible(false)}
       />
       <DeleteAccountModal 
         visible={deleteAccountModalVisible} 
         onClose={handleCloseDeleteAccountModal} 
+        onAccountDeletion={() => setDeleteAccountModalVisible(false)}
       />
       </View>
     </View>
@@ -150,6 +163,7 @@ const styles = StyleSheet.create({
     marginBottom: '5%'
   },
 
+
   button_container: {
     width: '80%',
     justifyContent: 'center',
@@ -160,5 +174,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 5,
   },
+
+  boldText: {
+    fontWeight: 'bold'
+ },
+
+
 });
 

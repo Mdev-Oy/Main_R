@@ -93,10 +93,9 @@ export const RestorePassword = () => {
               
               </View>
     
-              <View>
+              <View style = {styles.bottom_buttons}>
                 <Button 
                         mode="contained" 
-                        
                         onPress={handlePasswordReset} 
                         buttonColor="#FFFFFF"
                         textColor={bgColor}
@@ -161,6 +160,10 @@ const styles = StyleSheet.create({
       fontWeight: "500",
       marginTop: "8%",
       marginBottom: "3%",
+    },
+
+    bottom_buttons: {
+
     },
   
   
