@@ -4,13 +4,14 @@ import { useNavigation } from "@react-navigation/native";
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 import { BottomTabs } from "./BottomNav";
 import { Settings } from "./Settings/Settings";
 import { FTimer } from "./Timer";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Stats } from "./Stats";
+
 ; 
 
 
@@ -39,7 +40,7 @@ export const MainS = () => {
 
       <Tab.Screen
         name="Stats"
-        component={FTimer}
+        component={Stats}
         options={{
           headerShown: false,
           tabBarLabel: 'Stats', 
