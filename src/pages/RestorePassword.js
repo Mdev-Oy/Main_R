@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, StyleSheet, Pressable, TouchableOpacity, Keyboard } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { TextInput, Button, Paragraph, Dialog, Portal } from 'react-native-paper';
+import { TextInput, Button, Paragraph, Dialog, Portal, useTheme } from 'react-native-paper';
 
 import { auth } from "../../firebase";
-import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
-
-import { Loading } from "./Loading";
+import { sendPasswordResetEmail } from "firebase/auth";
 
 
-const bgColor = "#161618";
+
+
+
 
 export const RestorePassword = () => {
 
     const nav = useNavigation();
+    const theme = useTheme();
+
     const hideDialog = () => setVisible(false);
     const [email, setEmail] = useState('');
     const [IsEmailValid, setIsEmailValid] = useState(false);
@@ -46,16 +48,16 @@ export const RestorePassword = () => {
     return (
         
 
-          <SafeAreaView style={styles.contentView}>
+          <SafeAreaView style={{flex: 1, backgroundColor: theme.colors.background,}}>
 
             <Portal> 
-                <Dialog visible={visible} onDismiss={hideDialog} style={{ backgroundColor: '#FFFFFF' }}>
-                    <Dialog.Title> Email sent! </Dialog.Title>
+                <Dialog visible={visible} onDismiss={hideDialog} style={{ backgroundColor: theme.colors.onPrimary }}>
+                    <Dialog.Title style = {{color: theme.colors.secondary}}> Email sent! </Dialog.Title>
                     <Dialog.Content>
-                        <Paragraph> We've sent you an email! Please check your inbox </Paragraph>
+                        <Paragraph style = {{color: theme.colors.outline}}> Email sent! Please check your inbox </Paragraph>
                     </Dialog.Content>
                     <Dialog.Actions>
-                        <Button onPress={hideDialog} textColor="#000000"> Ok </Button>
+                        <Button onPress={hideDialog} textColor={theme.colors.secondary}> Ok </Button>
                     </Dialog.Actions>
                 </Dialog>
             </Portal>
@@ -63,7 +65,11 @@ export const RestorePassword = () => {
 
 
 
-            <View style={styles.maincontainer}>
+            <View style={{
+              flex: 1,
+              padding: '10%' , 
+              backgroundColor: theme.colors.background,
+            }}>
               <View style={styles.titleContainer}>
                 <Text style={styles.title_main}> Reset your Password </Text>
               </View>
@@ -75,6 +81,7 @@ export const RestorePassword = () => {
                           style={styles.input_signup}
     
                           mode='outlined'
+                          textColor={theme.colors.onSurfaceVariant}
                           placeholder="Enter your email"
                           value={email}
                           onChangeText={(email) => { setEmail(email); validateEmail(email); }} 
@@ -96,9 +103,10 @@ export const RestorePassword = () => {
               <View style = {styles.bottom_buttons}>
                 <Button 
                         mode="contained" 
+                        disabled={IsEmailValid ? false : true}
                         onPress={handlePasswordReset} 
-                        buttonColor="#FFFFFF"
-                        textColor={bgColor}
+                        buttonColor={theme.colors.onPrimary}
+                        textColor={theme.colors.background}
                         rippleColor="#bababa"
                         style = {styles.restore_button}>
                           
@@ -123,20 +131,6 @@ export const RestorePassword = () => {
 
 
 const styles = StyleSheet.create({
-
-
-    contentView: {
-      flex: 1,
-      backgroundColor: bgColor,
-    },
-  
-    maincontainer: {
-      flex: 1,
-      padding: '10%' , 
-      backgroundColor: bgColor,
-  
-  
-    },
   
     titleContainer: {
       justifyContent: "center",

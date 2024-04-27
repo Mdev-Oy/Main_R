@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
-import { Modal, Button, TextInput } from 'react-native-paper';
+import { Modal, Button, TextInput, useTheme } from 'react-native-paper';
 import { signOut, signInWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword, verifyBeforeUpdateEmail } from "firebase/auth";
 import { doc, updateDoc } from 'firebase/firestore';
 
 import { db, auth } from '../../../firebase';
 
 export const ChangeEmailModal = ({ visible, onClose, onEmailChange }) => {
+
+  const theme = useTheme();
   const [newEmail, setNewEmail] = useState('');
   const [oldPassword, setOldPassword] = useState('');
-
+  
   const changeEmail = async () => {
     try {
       const user = auth.currentUser;
@@ -44,17 +46,23 @@ export const ChangeEmailModal = ({ visible, onClose, onEmailChange }) => {
   return (
     <Modal visible={visible} onDismiss={onClose}>
 
-        <View style={styles.modalContent}>
+        <View style={{
+            backgroundColor: theme.colors.secondary,
+            padding: 20,
+            borderRadius: 5,
+            alignItems: 'center',
+        }}>
         <TextInput
             style={styles.input}
+            textColor={theme.colors.onSurfaceVariant}
             placeholder="Email"
             value={newEmail}
             onChangeText={setNewEmail}
             secureTextEntry
             mode='outlined'
-            activeOutlineColor="#818181"
-            outlineStyle = {{borderRadius: 5}}
-            contentStyle={{backgroundColor: 'rgba(255, 255, 255, 1)'}}
+            activeOutlineColor={ theme.colors.outline }
+            outlineStyle = {{ borderRadius: 5 }}
+            contentStyle={{ backgroundColor: theme.colors.onPrimary }}
           />
 
 
@@ -65,16 +73,16 @@ export const ChangeEmailModal = ({ visible, onClose, onEmailChange }) => {
             onChangeText={setOldPassword}
             secureTextEntry
             mode='outlined'
-            activeOutlineColor="#818181"
-            outlineStyle = {{borderRadius: 5}}
-            contentStyle={{backgroundColor: 'rgba(255, 255, 255, 1)'}}
+            activeOutlineColor={ theme.colors.outline }
+            outlineStyle = {{ borderRadius: 5 }}
+            contentStyle={{ backgroundColor: theme.colors.onPrimary }}
           />
           
           <View style={styles.buttonsContainer}>
             <Button 
             onPress={onClose} 
-            buttonColor="#1a1a1c"
-            textColor='#FFFFFF'
+            buttonColor = {theme.colors.secondaryContainer}
+            textColor = {theme.colors.onPrimary}
             rippleColor="#bababa"
             style={styles.item}> 
             Cancel 
@@ -82,8 +90,8 @@ export const ChangeEmailModal = ({ visible, onClose, onEmailChange }) => {
 
             <Button 
             onPress={changeEmail} 
-            buttonColor="#1a1a1c"
-            textColor='#FFFFFF'
+            buttonColor = {theme.colors.secondaryContainer}
+            textColor = {theme.colors.onPrimary}
             rippleColor="#bababa"
             style={styles.item}> 
             Confirm 
@@ -98,12 +106,7 @@ export const ChangeEmailModal = ({ visible, onClose, onEmailChange }) => {
 const styles = StyleSheet.create({
 
 
-  modalContent: {
-    backgroundColor: '#202022',
-    padding: 20,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
+
   input: {
     width: '100%',
     height: 35,

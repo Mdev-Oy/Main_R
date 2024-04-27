@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import {CountdownCircleTimer, onTimeElapsed} from 'react-native-countdown-circle-timer';
-import { TextInput, Button, Paragraph, Dialog, Portal, Divider } from 'react-native-paper';
+import { TextInput, Button, useTheme } from 'react-native-paper';
 import { auth, db } from "../../firebase";
 import { signOut, signInWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword, verifyBeforeUpdateEmail } from "firebase/auth";
 import { doc, updateDoc, getDoc, setDoc, Firestore, increment } from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
-const bgColor = "#161618";
+
 
 export const FTimer = () => {
+  const theme = useTheme();
+
+
   const [isRunning, setIsRunning] = useState(false);
   const [initialDuration, setInitialDuration] = useState(300); 
+  const [longestSession, setLongestSession] = useState(0);
   const [reset, setReset] = useState(0);
   const now = new Date();
   const user = auth.currentUser;
@@ -27,8 +31,24 @@ export const FTimer = () => {
 
   };
 
+
+  useEffect(() => {
+    const getLongestSession = async () => {
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        setLongestSession(data.longestSession || 0);
+        console.log(longestSession);
+      }
+    }
+    getLongestSession();
+  }, []); 
+
+
   const handleDone = async () => {
-    // Stop the timer
+
     setIsRunning(false);
     setReset(reset + 1);
 
@@ -42,22 +62,30 @@ export const FTimer = () => {
       
       
       await updateDoc(userDocRef, {
-        focusedTime: increment(focusedTimeMinutes)
+        focusedTime: increment(focusedTimeMinutes),
       });
 
-      console.log('total worked')
+      if (focusedTimeMinutes > longestSession) {
+        setLongestSession(focusedTimeMinutes);
+  
+        await updateDoc(userDocRef, {
+          longestSession: focusedTimeMinutes
+        });
+      }
+
+
       if (userStatsDoc.exists()) {
         await updateDoc(userStatsRef, {
           focusedTime: increment(focusedTimeMinutes)
         });
-        console.log(1);
+
 
       } else {
         await setDoc(userStatsRef, {
           date: now.getTime(),
           focusedTime: focusedTimeMinutes
         },{ merge: true });
-        console.log(2);
+
       }
 
     } catch (error) {
@@ -90,7 +118,7 @@ export const FTimer = () => {
       <CountdownCircleTimer
         isPlaying={ isRunning }
         duration={ initialDuration }
-        colors="#FFFFFF"
+        colors={theme.colors.onPrimary}
         strokeWidth={8}
         size={250}
         textStyle={{ fontSize: 50 }}

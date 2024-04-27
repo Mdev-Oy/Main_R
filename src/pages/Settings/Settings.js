@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { Avatar, Card, IconButton, Button } from 'react-native-paper';
+import { Avatar, Card, IconButton, Button, useTheme } from 'react-native-paper';
 import { auth, db } from '../../../firebase';
 import { signOut } from 'firebase/auth';
 import { useNavigation } from "@react-navigation/native";
@@ -13,6 +13,9 @@ import { getDoc, doc } from 'firebase/firestore';
 
 
 export const Settings = () => {
+
+  const theme = useTheme();
+
   const [passModalVisible, setPassModalVisible] = useState(false);
   const [emailModalVisible, setEmailModalVisible] = useState(false);
   const [deleteAccountModalVisible, setDeleteAccountModalVisible] = useState(false);
@@ -56,8 +59,18 @@ export const Settings = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.info_container}>
+    <View style={{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.background
+    }}>
+      <View style={{
+        alignItems: 'baseline',
+        width: '80%',
+        backgroundColor: theme.colors.secondary,
+        marginBottom: '5%'
+      }}>
         <Card.Title
           style={{borderRadius: 5, }}
           title= 
@@ -66,14 +79,14 @@ export const Settings = () => {
             Email: <Text style={styles.boldText}> {user.email} </Text> 
           </Text>
           }
-          titleStyle={{ fontSize: 14, color: '#FFFFFF'}}
+          titleStyle={{ fontSize: 14, color: theme.colors.onPrimary}}
           subtitle= 
           {
             <Text>
                 Focused time: <Text style={styles.boldText}> {focusedTime} min. </Text> 
             </Text>
           }
-          subtitleStyle={{fontSize: 14, color: '#FFFFFF'}}
+          subtitleStyle={{fontSize: 14, color: theme.colors.onPrimary}}
           left=
           {
             (props) => <Avatar.Icon {...props} 
@@ -88,8 +101,8 @@ export const Settings = () => {
 
       <View style={styles.button_container}>
       <Button 
-        buttonColor="#202022"
-        textColor='#FFFFFF'
+        buttonColor = { theme.colors.secondary }
+        textColor = { theme.colors.onPrimary }
         rippleColor="#bababa"
         style={styles.item} 
         onPress={() => setPassModalVisible(true)}>
@@ -98,8 +111,8 @@ export const Settings = () => {
       </Button>
 
       <Button 
-        buttonColor="#202022"
-        textColor='#FFFFFF'
+        buttonColor = { theme.colors.secondary }
+        textColor = { theme.colors.onPrimary }
         rippleColor="#bababa"
         style={styles.item} 
         onPress={() => setEmailModalVisible(true)}>
@@ -108,8 +121,8 @@ export const Settings = () => {
       </Button>
 
       <Button 
-        buttonColor="#202022"
-        textColor='#FFFFFF'
+        buttonColor = { theme.colors.secondary }
+        textColor = { theme.colors.onPrimary }
         rippleColor="#bababa"
         style={styles.item} 
         onPress={() => setDeleteAccountModalVisible(true)}>
@@ -118,8 +131,8 @@ export const Settings = () => {
       </Button>
 
       <Button 
-        buttonColor="#202022"
-        textColor='#FFFFFF'
+        buttonColor = { theme.colors.secondary }
+        textColor = { theme.colors.onPrimary }
         rippleColor="#bababa"
         style={styles.item} 
         onPress={() => handleLogout()}>
@@ -149,19 +162,6 @@ export const Settings = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#161618',
-  },
-
-  info_container: {
-    alignItems: 'baseline',
-    width: '80%',
-    backgroundColor: '#202022',
-    marginBottom: '5%'
-  },
 
 
   button_container: {
@@ -178,7 +178,6 @@ const styles = StyleSheet.create({
   boldText: {
     fontWeight: 'bold'
  },
-
 
 });
 

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert, Text } from 'react-native';
-import { Modal, Button, TextInput } from 'react-native-paper';
+import { Modal, Button, TextInput, useTheme } from 'react-native-paper';
 import { reauthenticateWithCredential, updatePassword, EmailAuthProvider } from 'firebase/auth';
 
 import { auth, db } from '../../../firebase';
 
 
 export const ChangePasswordModal = ({ visible, onClose, onPasswordChange }) => {
+
+  const theme = useTheme();
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
@@ -33,36 +35,43 @@ export const ChangePasswordModal = ({ visible, onClose, onPasswordChange }) => {
   return (
     <Modal visible={visible} onDismiss={onClose}>
 
-        <View style={styles.modalContent}>
+        <View style={{
+            backgroundColor: theme.colors.secondary,
+            padding: 20,
+            borderRadius: 5,
+            alignItems: 'center',
+        }}>
         <TextInput
             style={styles.input}
+            textColor={theme.colors.onSurfaceVariant}
             placeholder="Current Password"
             value={oldPassword}
             onChangeText={setOldPassword}
             secureTextEntry
             mode='outlined'
-            activeOutlineColor="#818181"
-            outlineStyle = {{borderRadius: 5}}
-            contentStyle={{backgroundColor: 'rgba(255, 255, 255, 1)'}}
+            activeOutlineColor={ theme.colors.outline }
+            outlineStyle = {{ borderRadius: 5 }}
+            contentStyle={{ backgroundColor: theme.colors.onPrimary }}
           />
 
 
           <TextInput
             style={styles.input}
+            textColor={theme.colors.onSurfaceVariant}
             placeholder="New Password (>8 chars)"
             value={newPassword}
             onChangeText={setNewPassword}
             secureTextEntry
             mode='outlined'
-            activeOutlineColor="#818181"
-            outlineStyle = {{borderRadius: 5}}
-            contentStyle={{backgroundColor: 'rgba(255, 255, 255, 1)'}}
+            activeOutlineColor={ theme.colors.outline }
+            outlineStyle = {{ borderRadius: 5 }}
+            contentStyle={{ backgroundColor: theme.colors.onPrimary }}
           />
           
           <View style={styles.buttonsContainer}>
             <Button 
             onPress={onClose} 
-            buttonColor="#1a1a1c"
+            buttonColor={theme.colors.secondaryContainer}
             textColor='#FFFFFF'
             rippleColor="#bababa"
             style={styles.item}> 
@@ -71,7 +80,7 @@ export const ChangePasswordModal = ({ visible, onClose, onPasswordChange }) => {
 
             <Button 
             onPress={changePassword} 
-            buttonColor="#1a1a1c"
+            buttonColor={theme.colors.secondaryContainer}
             textColor='#FFFFFF'
             rippleColor="#bababa"
             style={styles.item}> 
@@ -87,12 +96,6 @@ export const ChangePasswordModal = ({ visible, onClose, onPasswordChange }) => {
 const styles = StyleSheet.create({
 
 
-  modalContent: {
-    backgroundColor: '#202022',
-    padding: 20,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
   input: {
     width: '100%',
     height: 35,

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import { Modal, Button, TextInput } from 'react-native-paper';
+import { Modal, Button, TextInput, useTheme } from 'react-native-paper';
 import { reauthenticateWithCredential, deleteUser, EmailAuthProvider } from 'firebase/auth';
 
 import { auth } from '../../../firebase';
 
 export const DeleteAccountModal = ({ visible, onClose, onAccountDeletion }) => {
+
+  const theme = useTheme();
   const [password, setPassword] = useState('');
 
   const deleteAccount = async () => {
@@ -28,15 +30,23 @@ export const DeleteAccountModal = ({ visible, onClose, onAccountDeletion }) => {
   return (
     <Modal visible={visible} onDismiss={onClose}>
 
-        <View style={styles.modalContent}>
+        <View style={{
+            backgroundColor: theme.colors.secondary,
+            paddingHorizontal: 25,
+            paddingVertical: 40,
+            borderRadius: 5,
+            alignItems: 'center',
+        }}>
+
         <TextInput
             style={styles.input}
+            textColor={theme.colors.onSurfaceVariant}
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
             mode='outlined'
-            activeOutlineColor="#818181"
+            activeOutlineColor = {theme.colors.outline}
             outlineStyle = {{borderRadius: 5}}
             contentStyle={{backgroundColor: 'rgba(255, 255, 255, 1)'}}
           />
@@ -45,8 +55,8 @@ export const DeleteAccountModal = ({ visible, onClose, onAccountDeletion }) => {
           <View style={styles.buttonsContainer}>
             <Button 
             onPress={onClose} 
-            buttonColor="#1a1a1c"
-            textColor='#FFFFFF'
+            buttonColor = { theme.colors.tertiary }
+            textColor = { theme.colors.onPrimary }
             rippleColor="#bababa"
             style={styles.item}> 
             Cancel 
@@ -54,8 +64,8 @@ export const DeleteAccountModal = ({ visible, onClose, onAccountDeletion }) => {
 
             <Button 
             onPress={deleteAccount} 
-            buttonColor="#1a1a1c"
-            textColor='#FFFFFF'
+            buttonColor = { theme.colors.tertiary }
+            textColor = { theme.colors.onPrimary }
             rippleColor="#bababa"
             style={styles.item}> 
             Confirm 
@@ -68,14 +78,6 @@ export const DeleteAccountModal = ({ visible, onClose, onAccountDeletion }) => {
 };
 
 const styles = StyleSheet.create({
-
-
-  modalContent: {
-    backgroundColor: '#202022',
-    padding: 20,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
   input: {
     width: '100%',
     height: 35,

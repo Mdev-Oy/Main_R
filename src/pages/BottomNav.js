@@ -3,7 +3,7 @@ import { SafeAreaView, View, Text, StyleSheet, TextInput, Pressable, Keyboard, B
 import { useNavigation } from "@react-navigation/native";
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
+import { useTheme } from "react-native-paper";
 
 
 import { Settings } from "./Settings/Settings";
@@ -13,12 +13,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 const Tab = createBottomTabNavigator();
-const bgColor = "#161618";
 
 export const BottomNav = () => {
 
 
     const nav = useNavigation();
+    const theme = useTheme();
 
     const move_settings = () => {
       nav.push("Settings"); 
@@ -28,12 +28,12 @@ export const BottomNav = () => {
     <Tab.Navigator    
     screenOptions={{
       tabBarStyle: {
-        backgroundColor: '#1a1a1c', 
+        backgroundColor: theme.colors.tertiary, 
         borderTopWidth: 0,
         height: '7.5%',
       },
       tabBarShowLabel: false,
-      tabBarActiveTintColor: '#FFFFFF',
+      tabBarActiveTintColor: theme.colors.onPrimary,
       tabBarInactiveTintColor: '#fcfcfc',
     }}>
 
@@ -77,6 +77,3 @@ export const BottomNav = () => {
     )
   }
   
-  const styles = StyleSheet.create({
-
-  });

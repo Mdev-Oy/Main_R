@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, Text, StyleSheet, Pressable, Keyboard, TouchableOpacity, StatusBar } from "react-native";
-import { TextInput, Button, Paragraph, Dialog, Portal } from 'react-native-paper';
+import { SafeAreaView, View, StyleSheet, Pressable, Keyboard, TouchableOpacity, StatusBar } from "react-native";
+import { TextInput, Button, Paragraph, Dialog, Portal, Checkbox, useTheme, Text } from 'react-native-paper';
 import { useNavigation } from "@react-navigation/native";
 
 import { auth, db } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
-import { Screen_button } from "../modules/Screen_button";
-import Toast from 'react-native-toast-message';
+import { ScrollView } from "react-native";
+
+
 
 
 
@@ -15,12 +16,20 @@ const bgColor = "#161618";
 
 export const SignUp = () => {
 
-
+  const theme = useTheme();
   const [email, setEmail] = useState();
   const [IsEmailValid, setIsEmailValid] = useState(false);
   const [IsPasswordValid, setIsPasswordValid] = useState(false);
   const [IsPasswordVisible, setIsPasswordVisible] = useState(false);
   const [password, setPassword] = useState();
+  const [agreed, setAgreed] = useState(false);
+
+  const [visible, setVisible] = useState(false);
+  const hideDialog = () => setVisible(false);
+
+  const [visibleTerms, setVisibleTerms] = useState(false);
+  const hideTerms = () => setVisibleTerms(false);
+
 
   const nav = useNavigation();
 
@@ -36,7 +45,16 @@ export const SignUp = () => {
         username: user.uid,  
         email: user.email,
         focusedTime: 0, 
+        longestSession: 0,
         stats: [], 
+        achievements: [
+          { name: "Beginer", icon: "clock-time-six-outline", description: "Reach 1 hour of total focused time", completed: false },
+          { name: "Focused Apprentice", icon: "star-four-points", description: "Reach 5 hours of total focused time", completed: false }, 
+          { name: "Time Master", icon: "trophy-variant-outline", description: "Reach 10 hours of total focused time", completed: false },
+          { name: "Focus Guru", icon: "head-lightbulb-outline", description: "Reach 25 hours of total focused time", completed: false },
+          { name: "Marathon", icon: "fast-forward-30", description: "Complete a single focus session >= 30 minutes", completed: false },
+          { name: "Marathon II", icon: "fast-forward-60", description: "Complete a single focus session >= 60 minutes", completed: false }
+        ], 
       });
 
       const statsRef = doc(db, "users", user.uid, "stats", now.getUTCFullYear() + "-" + ('0' + (now.getUTCMonth() + 1)).slice(-2) + "-" + ('0' + now.getUTCDate()).slice(-2));
@@ -46,27 +64,11 @@ export const SignUp = () => {
       focusedTime: 0
       });
 
-      Toast.show({
-        type: 'success',
-        text1: 'Registered!',
-        visibilityTime: 700,
-        autoHide: true,
-      })
-
-
+      
       setTimeout(move_login, 1000) // needs to be changed
       
     } catch (error) {
-      
-      Toast.show({
-        type: 'error',
-        text1: 'Error, please try again!',
-        visibilityTime: 1000,
-        autoHide: true,
-      })
-      
-      console.error(error);
-      //Alert.alert('Error', error.message);
+      setVisible(true);
     }
   };
 
@@ -90,11 +92,22 @@ export const SignUp = () => {
 
 
   return (
-    <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
-      <StatusBar barStyle="light-content" backgroundColor={bgColor} />
-      <SafeAreaView style={styles.contentView}>
+    <Pressable style={{flex: 1, backgroundColor: theme.colors.background,}} onPress={Keyboard.dismiss}>
+      <StatusBar barStyle="light-content" backgroundColor={theme.colors.background}/>
+      <SafeAreaView style={{flex: 1, backgroundColor: theme.colors.background,}}>
+      <Portal> 
+          <Dialog visible={visible} onDismiss={hideDialog} style={{ backgroundColor: theme.colors.onPrimary }}>
+            <Dialog.Title style = {{color: theme.colors.secondary}}> Sign Up failed </Dialog.Title>
+            <Dialog.Content>
+              <Paragraph style = {{color: theme.colors.outline}}> Please try again </Paragraph>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideDialog} textColor={theme.colors.secondary}> Ok </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
 
-        <View style={styles.maincontainer}>
+        <View style={{flex: 1, padding: '10%', backgroundColor: theme.colors.background,}}>
           <View style={styles.titleContainer}>
             <Text style={styles.title_main}> Create an account </Text>
           </View>
@@ -106,6 +119,7 @@ export const SignUp = () => {
                       style={styles.input_signup}
 
                       mode='outlined'
+                      textColor={theme.colors.onSurfaceVariant}
                       placeholder="Enter your email"
                       value={email}
                       onChangeText={(email) => { setEmail(email); validateEmail(email); }} 
@@ -126,6 +140,7 @@ export const SignUp = () => {
                       style={styles.input_signup}
 
                       mode='outlined'
+                      textColor={theme.colors.onSurfaceVariant}
                       placeholder="Enter your password"
                       value={password}
                       onChangeText={(password) => {setPassword(password); validatePassword(password); }} 
@@ -139,8 +154,62 @@ export const SignUp = () => {
                         onPress={togglePasswordVisibility} />
                       )}
                       outlineStyle = {{borderRadius: 5}}
-                      theme = {{ colors: { background: 'white' } }}
+                      theme = {{ colors: { background: theme.colors.onPrimary } }}
                     />
+
+        <View style = {{flexDirection: 'row', marginTop: '3%'}}>
+        <Checkbox
+          rippleColor={'transparent'}
+          status={agreed ? 'checked' : 'unchecked'}
+          onPress={() => {
+            setAgreed(!agreed);
+          }}
+          color={theme.colors.onPrimary}
+          uncheckedColor={theme.colors.onPrimary}
+        /> 
+      <TouchableOpacity style = {{alignSelf: 'center'}} onPress={() => setVisibleTerms(true)}>
+        <Text style = {{color: theme.colors.onPrimary, textDecorationLine: 'underline'}}>I agree with terms and conditions</Text>
+      </TouchableOpacity>
+      
+      <Portal> 
+          <Dialog visible={visibleTerms} onDismiss={hideTerms} style={{ backgroundColor: theme.colors.onPrimary, borderRadius: 10 }}>
+          <Dialog.Title style = {{color: theme.colors.secondary}}> Terms and Conditions </Dialog.Title>
+            <Dialog.ScrollArea>
+            <ScrollView>
+
+            <Dialog.Content>
+              <Paragraph style = {{color: theme.colors.primary, fontWeight: 'bold', paddingTop: 15}}>I. Using Galaxy </Paragraph>
+
+                <Text style = {{color: theme.colors.secondary}}>- You may use Galaxy to help you focus on your tasks. </Text>
+                <Text style = {{color: theme.colors.secondary}}>- You agree to use Galaxy responsibly and not for any illegal or harmful purposes. </Text>
+
+              <Paragraph style = {{color: theme.colors.primary, fontWeight: 'bold', paddingTop: 15}}>II. Data We Collect</Paragraph>
+                <Text style = {{color: theme.colors.secondary}}>- To improve Galaxy, we collect limited data about your usage, such as how long you use the focus features. </Text>
+
+              <Paragraph style = {{color: theme.colors.primary, fontWeight: 'bold', paddingTop: 15}}>III. Your Privacy Rights </Paragraph>
+                <Text style = {{color: theme.colors.secondary}}>- We comply with the General Data Protection Regulation (GDPR). </Text>
+                <Text style = {{color: theme.colors.secondary}}>- You have the right to request a copy of your data. </Text>
+                <Text style = {{color: theme.colors.secondary}}>- You can request that we delete your data at any time.</Text>
+
+              <Paragraph style = {{color: theme.colors.primary, fontWeight: 'bold', paddingTop: 15}}>IV. Data We Collect</Paragraph>
+                <Text style = {{color: theme.colors.secondary}}>- Galaxy is provided "as is." We make no guarantees about its performance or that it will always be available. </Text>
+
+              <Paragraph style = {{color: theme.colors.primary, fontWeight: 'bold', paddingTop: 15}}>V. Contact Us</Paragraph>
+                <Text style = {{color: theme.colors.secondary}}>- We may update these terms occasionally. We'll notify you of significant changes. </Text>
+                <Text style = {{color: theme.colors.secondary}}>- If you have questions / want to request your data, send an email to: galaxy@gmail.com</Text>
+              
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideTerms} textColor={theme.colors.secondary}> Ok </Button>
+            </Dialog.Actions>
+            </ScrollView>
+            </Dialog.ScrollArea>
+          </Dialog>
+        </Portal>
+
+
+
+        </View>
           
           </View>
 
@@ -148,9 +217,10 @@ export const SignUp = () => {
           <Button 
                     mode="contained" 
                     
+                    disabled={(agreed && IsPasswordValid && IsEmailValid) ? false : true}
                     onPress={createUser} 
-                    buttonColor="#FFFFFF"
-                    textColor={bgColor}
+                    buttonColor={theme.colors.onPrimary}
+                    textColor={theme.colors.primary}
                     rippleColor="#bababa"
                     style = {styles.signup_button}>
                       
@@ -168,7 +238,6 @@ export const SignUp = () => {
         </View>
         </View>
       </SafeAreaView>
-      <Toast />
     </Pressable>
   );
 };
@@ -176,18 +245,6 @@ export const SignUp = () => {
 const styles = StyleSheet.create({
 
 
-  contentView: {
-    flex: 1,
-    backgroundColor: bgColor,
-  },
-
-  maincontainer: {
-    flex: 1,
-    padding: '10%' , 
-    backgroundColor: bgColor,
-
-
-  },
 
   titleContainer: {
     justifyContent: "center",
@@ -195,7 +252,7 @@ const styles = StyleSheet.create({
 
   mainContent: {
     flex: 1,
-    marginTop: '10%',
+    marginTop: '5%',
   },
 
   title_main: {
@@ -209,7 +266,7 @@ const styles = StyleSheet.create({
   field_label: {
     color: "#ffffff",
     fontWeight: "500",
-    marginTop: "8%",
+    marginTop: "5%",
     marginBottom: "3%",
   },
 
@@ -219,7 +276,7 @@ const styles = StyleSheet.create({
   signup_button: {
     textColor: "#818181",
     borderRadius: 10,
-    marginBottom: "3%"
+    marginBottom: "2%"
   },
 
   login_button: {
