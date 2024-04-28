@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Modal, Button, TextInput, useTheme } from 'react-native-paper';
-import { signOut, signInWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword, verifyBeforeUpdateEmail } from "firebase/auth";
-import { doc, updateDoc } from 'firebase/firestore';
 
+import { signInWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword, verifyBeforeUpdateEmail } from "firebase/auth";
+import { doc, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../../../firebase';
+
+
 
 export const ChangeEmailModal = ({ visible, onClose, onEmailChange }) => {
 
@@ -38,8 +40,6 @@ export const ChangeEmailModal = ({ visible, onClose, onEmailChange }) => {
       }
 
     } catch (error) {
-      Alert.alert('Error', error.message); 
-      console.error(error);
     }
   };
 

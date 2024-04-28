@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import {CountdownCircleTimer, onTimeElapsed} from 'react-native-countdown-circle-timer';
-import { TextInput, Button, useTheme } from 'react-native-paper';
-import { auth, db } from "../../firebase";
-import { signOut, signInWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword, verifyBeforeUpdateEmail } from "firebase/auth";
-import { doc, updateDoc, getDoc, setDoc, Firestore, increment } from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, StyleSheet, Text } from 'react-native';
+import { TextInput, Button, Dialog, Portal, RadioButton, useTheme, IconButton } from 'react-native-paper';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CountdownCircleTimer, onTimeElapsed } from 'react-native-countdown-circle-timer';
+
+import { auth, db } from "../../firebase";
+import { doc, updateDoc, getDoc, setDoc, Firestore, increment } from 'firebase/firestore';
 
 
 
@@ -18,8 +19,37 @@ export const FTimer = () => {
   const [initialDuration, setInitialDuration] = useState(300); 
   const [longestSession, setLongestSession] = useState(0);
   const [reset, setReset] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const [circleColor, setCircleColor] = useState('#ffffff');
+  const hideCustomization = () => setVisible(false);
+
+
   const now = new Date();
   const user = auth.currentUser;
+
+  useEffect(() => {
+    const loadCircleColor = async() => {
+      try {
+        const clr = await AsyncStorage.getItem('circleColor');
+        if (clr) {
+          setCircleColor(clr);
+        } 
+      } catch (error) {}
+    };
+
+    loadCircleColor();
+  }, []);
+
+
+  useEffect(() => {
+    const setCircleColor = async() => {
+      try {
+        await AsyncStorage.setItem('circleColor', circleColor);
+      } catch (error) {}
+    };
+
+    setCircleColor();
+  }, [circleColor]);
 
   const handleStart = () => {
     setIsRunning(true);
@@ -89,16 +119,10 @@ export const FTimer = () => {
       }
 
     } catch (error) {
-      console.error("Error updating focused time:", error);
     }
   };
 
 
-
-  const handleTimeElapsed = () => {
-
-    console.log('Timer elapsed');
-  };
 
   const handleDurationChange = (text) => {
     const newTime = parseInt(text) * 60;
@@ -112,18 +136,67 @@ export const FTimer = () => {
 
   return (
     <SafeAreaView style = {styles.mainView}>
+      <Button
+      icon="progress-pencil" 
+      textColor='#FFFFFF'
+      labelStyle={{fontSize: 35}}
+      size={30}
+      rippleColor='transparent'
+      onPress={() => {setVisible(true)}}
+      />
     <View style = {styles.container}>
+
+    <Portal> 
+          <Dialog visible={visible} onDismiss={hideCustomization} style={{ backgroundColor: theme.colors.tertiary }}>
+            <Dialog.Title style = {{color: theme.colors.onPrimary}}> Customization </Dialog.Title>
+            <Dialog.Content>
+            <RadioButton.Group onValueChange={val => setCircleColor(val)} value={circleColor}>
+
+              <View style = {{flexDirection: 'row', alignItems: 'center'}}>
+                <RadioButton value="#FFFFFF" color='#FFFFFF'/>
+                <Text style = {{color: theme.colors.onPrimary}}>White</Text>
+              </View>
+
+              <View style = {{flexDirection: 'row', alignItems: 'center'}}>
+                <RadioButton value="#A3D8FF" color='#A3D8FF'/>
+                <Text style = {{color: theme.colors.onPrimary}}>Blue</Text>
+              </View>
+              
+              <View style = {{flexDirection: 'row', alignItems: 'center'}}>
+                <RadioButton value="#94FFD8" color='#94FFD8'/>
+                <Text style = {{color: theme.colors.onPrimary}}>Light Green</Text>
+              </View>
+
+              <View style = {{flexDirection: 'row', alignItems: 'center'}}>
+                <RadioButton value="#FFEBB2" color='#FFEBB2'/>
+                <Text style = {{color: theme.colors.onPrimary}}>Yellow</Text>
+              </View>
+              
+              <View style = {{flexDirection: 'row', alignItems: 'center'}}>                            
+                <RadioButton value="#FF76CE" color='#FF76CE'/>
+                <Text style = {{color: theme.colors.onPrimary}}>Magenta</Text>
+              </View>
+
+
+
+    </RadioButton.Group>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideCustomization} textColor={theme.colors.onPrimary}> Ok </Button>
+            </Dialog.Actions>
+          </Dialog>
+      </Portal>
 
 
       <CountdownCircleTimer
         isPlaying={ isRunning }
         duration={ initialDuration }
-        colors={theme.colors.onPrimary}
+        colors={circleColor}
         strokeWidth={8}
         size={250}
         textStyle={{ fontSize: 50 }}
         onTimeElapsed= { handleDone }
-        onComplete={handleDone}
+        onComplete={ handleDone }
         key={reset}
       >
 

@@ -16,6 +16,10 @@ import { MainS } from "./src/pages/MainS";
 import { Settings } from "./src/pages/Settings/Settings";
 import { RestorePassword } from "./src/pages/RestorePassword";
 
+
+
+
+
 export default function App() {
   const Stack = createNativeStackNavigator();
   const theme = {

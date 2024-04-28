@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { Modal, Button, TextInput, useTheme } from 'react-native-paper';
-import { reauthenticateWithCredential, deleteUser, EmailAuthProvider } from 'firebase/auth';
 
-import { auth } from '../../../firebase';
+
+import { reauthenticateWithCredential, deleteUser, EmailAuthProvider } from 'firebase/auth';
+import { updateDoc, doc } from 'firebase/firestore';
+import { auth, db } from '../../../firebase';
+
+
 
 export const DeleteAccountModal = ({ visible, onClose, onAccountDeletion }) => {
 
   const theme = useTheme();
   const [password, setPassword] = useState('');
+  const user = auth.currentUser;
+  const userDocRef = doc(db, "users", user.uid);
 
   const deleteAccount = async () => {
     try {
@@ -16,14 +22,16 @@ export const DeleteAccountModal = ({ visible, onClose, onAccountDeletion }) => {
       const credential = EmailAuthProvider.credential(user.email, password);
       await reauthenticateWithCredential(user, credential);
 
-      await deleteUser(user);
+      await updateDoc(userDocRef, {
+        deleteRequest: true,
+      });
+
+      //manually: await deleteUser(user);
       await signOut(auth);
       Alert.alert('Account deleted!'); 
       onAccountDeletion();
       
     } catch (error) {
-      console.error(error);
-
     }
   };
 

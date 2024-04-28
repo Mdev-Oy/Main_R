@@ -9,7 +9,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { Loading } from "./Loading";
 
 
-const bgColor = "#161618";
 
 export const Login = () => {
 

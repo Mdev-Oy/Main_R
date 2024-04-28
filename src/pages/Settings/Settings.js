@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Avatar, Card, IconButton, Button, useTheme } from 'react-native-paper';
-import { auth, db } from '../../../firebase';
-import { signOut } from 'firebase/auth';
 import { useNavigation } from "@react-navigation/native";
 
 import { ChangePasswordModal } from './ChangePassword';
@@ -10,6 +8,9 @@ import { ChangeEmailModal } from './ChangeEmail';
 import { DeleteAccountModal } from './DeleteAccount';
 
 import { getDoc, doc } from 'firebase/firestore';
+import { auth, db } from '../../../firebase';
+import { signOut } from 'firebase/auth';
+
 
 
 export const Settings = () => {
@@ -54,7 +55,6 @@ export const Settings = () => {
       await signOut(auth);
       nav.navigate("Login");
     } catch (error) {
-      console.error(error);
     }
   };
 

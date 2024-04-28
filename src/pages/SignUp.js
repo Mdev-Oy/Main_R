@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, StyleSheet, Pressable, Keyboard, TouchableOpacity, StatusBar } from "react-native";
-import { TextInput, Button, Paragraph, Dialog, Portal, Checkbox, useTheme, Text } from 'react-native-paper';
+import { SafeAreaView, View, StyleSheet, Pressable, Keyboard, TouchableOpacity, StatusBar, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { TextInput, Button, Paragraph, Dialog, Portal, Checkbox, useTheme, Text } from 'react-native-paper';
+
 
 import { auth, db } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
-import { ScrollView } from "react-native";
 
 
 
 
 
-const bgColor = "#161618";
+
 
 export const SignUp = () => {
 
@@ -46,6 +46,9 @@ export const SignUp = () => {
         email: user.email,
         focusedTime: 0, 
         longestSession: 0,
+        signedUp: now.getTime(),
+        icon: 'turtle',
+        deleteRequest: false,
         stats: [], 
         achievements: [
           { name: "Beginer", icon: "clock-time-six-outline", description: "Reach 1 hour of total focused time", completed: false },

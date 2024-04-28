@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { Button, SegmentedButtons, Card, Avatar, useTheme } from 'react-native-paper';
+
 import { doc, getDoc, getDocs, updateDoc , collection, query, where } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
+
 import { LineChart } from "react-native-gifted-charts";
+
+
 
 export const Stats = () => {
 
@@ -20,12 +24,16 @@ export const Stats = () => {
     const [achievements, setAchievements] = useState([]);
     const [longestSession, setLongestSession] = useState(0);
     const [totalFocusedTime, setTotalFocusedTime] = useState(0);
-    
 
+    useEffect(() => {
+        fetchFocusedTimeData(currentWeek);
+    }, []);
 
     useEffect(() => {
         fetchFocusedTimeData(currentWeek);
     }, [currentWeek]);
+
+
 
     useEffect(() => {
         fetchUserData();
@@ -43,14 +51,12 @@ export const Stats = () => {
             where('date', '<=', endDate));
 
         const querySnapshot = await getDocs(q);
-        console.log(startDate, endDate, querySnapshot.docs);
         const weeklyFocusedTime = new Array(7).fill(0); 
+        //console.log(startDate, endDate, querySnapshot.docs);
 
         querySnapshot.forEach(doc => {
             const docData = doc.data();
-            console.log(docData);
             const date = new Date(docData.date); 
-            console.log(date);
             const dayIndex = date.getDay(); 
             weeklyFocusedTime[dayIndex] = docData.focusedTime;
         });
@@ -65,6 +71,7 @@ export const Stats = () => {
     const calculateWeekDays = (weekIndex) => {
         const now = new Date();
         const startOfWeek =  new Date(now.setDate(now.getDate() - now.getDay() - (weekIndex * 7))); 
+        startOfWeek.setUTCHours(0, 0, 0, 0); 
 
         const weekDays = [];
         for (let i = 0; i <= 7; i++) {
@@ -130,7 +137,6 @@ export const Stats = () => {
             achievements: newAchievements 
           });
         } catch (error) {
-          console.error(error)
         }
       };
 

@@ -36,7 +36,6 @@ export const RestorePassword = () => {
             nav.navigate("Login");
       
           } catch (error) {
-                console.log(error);
             } 
         
             finally {

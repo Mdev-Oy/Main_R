@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, Text, StyleSheet, TextInput, Pressable, Keyboard, Button } from "react-native";
+import { StyleSheet, } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "react-native-paper";
 
 
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+;
 
 
-import { BottomTabs } from "./BottomNav";
+
 import { Settings } from "./Settings/Settings";
 import { FTimer } from "./Timer";
 import { Stats } from "./Stats";
-
-; 
+ 
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -22,11 +22,9 @@ const Tab = createMaterialBottomTabNavigator();
 export const MainS = () => {
 
     const theme = useTheme();
-    const nav = useNavigation();
 
-    const move_settings = () => {
-      nav.push("Settings"); 
-    };
+
+
   
     return (
     <Tab.Navigator

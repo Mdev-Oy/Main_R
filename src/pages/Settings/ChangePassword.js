@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert, Text } from 'react-native';
 import { Modal, Button, TextInput, useTheme } from 'react-native-paper';
-import { reauthenticateWithCredential, updatePassword, EmailAuthProvider } from 'firebase/auth';
 
+
+import { reauthenticateWithCredential, updatePassword, EmailAuthProvider } from 'firebase/auth';
 import { auth, db } from '../../../firebase';
+
 
 
 export const ChangePasswordModal = ({ visible, onClose, onPasswordChange }) => {
@@ -27,8 +29,6 @@ export const ChangePasswordModal = ({ visible, onClose, onPasswordChange }) => {
       await signOut(auth);
       
     } catch (error) {
-      console.error(error);
-
     }
   };
 
