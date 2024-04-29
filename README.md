@@ -37,9 +37,7 @@
 
 ## Prerequisites
 - Node.js 
-- Java
-- Spring boot
-- PostgresSQL
+- NPM
 
 
 ## Installation
