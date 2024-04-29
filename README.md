@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-white.svg)](https://opensource.org/licenses/MIT)
 
 </div>
-<p align = "center"> Simple focus app. Simple productivity companion, focus and track your progress without any problems </p>
+<p align = "center"> Simple productivity companion, focus and track your progress without any problems </p>
 
 <p align = "center">
   <a href="#prerequisites">Prerequisites</a> •
